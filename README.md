@@ -26,25 +26,25 @@ working on those.
 Flokati-Parts
 -------------
 
-*Devices*
+**Devices**
 
-	> Currently there are only some spotlights and a mirror ball motor that I
+*	Currently there are only some spotlights and a mirror ball motor that I
 	built around the Atmega88 and NRF24L01+.
 	Devices have a unique 64bit address and can have multiple controllable
 	elements (e.g. brightness, speed).
 	Devices use Nordic's proprietary 2.4GHz NRF-technology (which was chosen
 	because it is really cheap, much cheaper than e.g. 802.15.4).
 
-*Gateway*
+**Gateway**
 
-	> There needs to be a bridge between the IP-world and the proprietary
+*	There needs to be a bridge between the IP-world and the proprietary
 	rf-world. Here it is an OpenWrt-based WiFi access point (a battery powered
 	TP-Link MR11U in my case) that also acts as a DCHP-server and hosts the
 	device database.
 
-*Frontend*
+**Frontend**
 
-	> At the moment there's only the Android-App, which discovers new devices,
+*	At the moment there's only the Android-App, which discovers new devices,
 	requests device metadata from the device database and allows low-level
 	control of discovered devices.
 
@@ -71,31 +71,31 @@ remote configuration of some devices in the near future.
 Directories
 ===========
 
-*/avr*
+**/avr**
 
-	> These are some small devices I have built, there's a spotlight, which is
+*	These are some small devices I have built, there's a spotlight, which is
 	able to PWM-dim or strobe a led. A mirror ball motor with controllable
 	speed and direction. And the serial<->NRF gateway that is attached to the
 	OpenWrt router.
 	I will add hardware schematics and board layouts later.
 
-*/Flokati-android*
+**/Flokati-android**
 
-	> This is the Android App as an Eclipse project. It's tiny and without any
+*	This is the Android App as an Eclipse project. It's tiny and without any
 	additional libraries. 
 
-*/json-db*
+**/json-db**
 
-	> Device metadata currently used by the database server on the OpenWrt
+*	Device metadata currently used by the database server on the OpenWrt
 	router. Temporary solution. Should be put into /etc/flokati/db.
 
-*/linux/flokati*
+**/linux/flokati**
 
-	> This is the OpenWrt package, consisting of two server-executables (bridge
+*	This is the OpenWrt package, consisting of two server-executables (bridge
 	and database) and an init-script. The bridge can indicate it's status with
 	a LED, that can be configured in the init-script.
 
-*/flokati/python*
+**/flokati/python**
 
-	> A few python tools, that I used during development. They do the same as the
+*	A few python tools, that I used during development. They do the same as the
 	C-servers for OpenWrt.
