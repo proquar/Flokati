@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Flokati</string>
+    <string name="wifi_connect">per WLAN verbinden</string>
+    <string name="wifi_disconnect">WLAN Verbindung trennen</string>
+    <string name="wifi_activated">Flokati WLAN verbunden</string>
+    <string name="wifi_active">WLAN ist aktiv.</string>
+    
+    <string name="errors_mcast_nosocket">Konnte Multicast-Socket nicht öffnen (IOException).</string>
+	<string name="errors_mcast_unknhost">Konnte Multicast-Adresse nicht auflösen (unknown host).</string>
+	<string name="errors_mcast_join">Konnte der Multicast-Gruppe nicht beitreten.</string>
+	<string name="errors_mcast_loopback">Konnte den Loopback-Mode für Multicast nicht deaktivieren.</string>
+	<string name="errors_mcast_nowifi">Mit keinem WLAN Accesspoint verbunden. Flokati funktioniert nur mit WLAN.</string>
+	
+	<string name="menu_refresh">Liste aktualisieren</string>
+	<string name="menu_refresh_long">Geräteliste aktualisieren</string>
+</resources>

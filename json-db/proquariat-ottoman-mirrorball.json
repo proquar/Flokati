@@ -1,0 +1,27 @@
+{
+	"family": "0000000100080000",
+	"mask": 48,
+	"ttl": 600,
+	"ttl-orig": 600,
+	"manufacturer": "Proquariat",
+	"model": "Ottoman",
+	"name": "Mirror Ball",
+	"names": {
+		"de": "Spiegelkugel"
+	},
+	"sinks": [
+		{
+			"id": 1,
+			"type": "short",
+			"name": "Speed",
+			"names": {
+				"de": "Geschwindigkeit"
+			}
+		},
+		{
+			"id": 2,
+			"type": "boolean",
+			"name": "Boost"
+		},
+	]
+}

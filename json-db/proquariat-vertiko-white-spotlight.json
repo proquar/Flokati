@@ -1,0 +1,43 @@
+{
+	"family": "0000000100010000",
+	"mask": 48,
+	"ttl": 600,
+	"ttl-orig": 600,
+	"manufacturer": "Proquariat",
+	"model": "Vertiko",
+	"name": "White Spotlight",
+	"names": {
+		"de": "Weißer Scheinwerfer"
+	},
+	"sinks": [
+		{
+			"id": 1,
+			"type": "unsigned short",
+			"name": "Brightness",
+			"names": {
+				"de": "Helligkeit"
+			}
+		},
+		{
+			"id": 2,
+			"type": "boolean",
+			"name": "Strobo?"
+		},
+		{
+			"id": 3,
+			"type": "unsigned short",
+			"name": "Pulsewidth",
+			"names": {
+				"de": "Pulsweite"
+			}
+		},
+		{
+			"id": 4,
+			"type": "unsigned short",
+			"name": "Pulse spacing",
+			"names": {
+				"de": "Pulsabstand"
+			}
+		}
+	]
+}
