@@ -18,6 +18,11 @@ start() {
 	start-stop-daemon -S -p /tmp/run/flokati.db.pid -m -b -x flokati-db -- $DB_DIR
 }
 
+boot() {
+	route add -net 224.0.0.0 netmask 240.0.0.0 dev wlan0
+	start
+}
+
 stop() {
 	start-stop-daemon -K -s SIGINT -p /tmp/run/flokati.bridge.pid
 	start-stop-daemon -K -p /tmp/run/ser2net.flokati.pid
