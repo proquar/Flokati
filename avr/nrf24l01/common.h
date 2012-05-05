@@ -6,7 +6,9 @@
 #include "radio.h"
 #include "packet.h"
 
-uint8_t group_addr[5] = { 0xa7, 0x6c, 0x92, 0x0d, 0x30 };
+#define FLOKATI_STANDARD 0x34
+
+uint8_t group_addr[5] = { 'F', 'l', 'o', 'k', FLOKATI_STANDARD };
 
 #define DEFAULT_DATA_RATE RADIO_1MBPS
 

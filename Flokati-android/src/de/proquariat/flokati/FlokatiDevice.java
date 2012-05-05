@@ -40,17 +40,18 @@ public class FlokatiDevice {
 	}
 	
 	public byte[] getMessageBytes(int ...sinks) {
-		byte[] message=new byte[32];
-		message[0]=0x40;
-		for (int i=1; i<9; i++) {
-			message[i]=(byte)(this.id>>(64-i*8));
+		byte[] message=new byte[33];
+		message[0]=0x34;
+		message[1]=0x40;
+		for (int i=2; i<10; i++) {
+			message[i]=(byte)(this.id>>(72-i*8)); //72-2*8=56
 		}
 		
-		int i=9;
+		int i=10; //first byte after preamble+id
 		for (int s: sinks) {
 			if (s>0 && s<=this.Controls.length) {
 				byte[] sinkBytes=this.Controls[s-1].getSinkAndValueBytes();
-				if ((i+sinkBytes.length)<32) {
+				if ((i+sinkBytes.length)<33) {
 					System.arraycopy(sinkBytes, 0, message, i, sinkBytes.length);
 					i+=sinkBytes.length;
 				}

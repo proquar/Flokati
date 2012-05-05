@@ -11,9 +11,9 @@ uint8_t uartRxAvailable() {
 	if (rxbuffer.readpos!=rxbuffer.writepos) return 1;
 	else return 0;
 }
-radiopacket_t *uartRxGet() {
+packetContainer_t *uartRxGet() {
 	if (rxbuffer.readpos!=rxbuffer.writepos)
-		return (radiopacket_t*)&(rxbuffer.buffer[rxbuffer.readpos]);
+		return (packetContainer_t*)&(rxbuffer.buffer[rxbuffer.readpos]);
 	else return 0;
 }
 
@@ -23,8 +23,8 @@ void uartRxConfirm() {
 }
 
 
-radiopacket_t *uartTxGet() {
-	return (radiopacket_t*)&(txbuffer.buffer[txbuffer.writepos]);
+packetContainer_t *uartTxGet() {
+	return (packetContainer_t*)&(txbuffer.buffer[txbuffer.writepos]);
 }
 
 void uartTxConfirm() {
@@ -65,7 +65,7 @@ void uartInit(uint8_t baudrate) {
 ISR( USART_RX_vect ) {
 	char read=UDR0;
 	if (rxbuffer.escape) {
-		if (rxbuffer.inpacket_pos<ABSOLUTE_MAXIMUM_SIZE)
+		if (rxbuffer.inpacket_pos<(ABSOLUTE_MAXIMUM_SIZE+1))
 			((uint8_t*)&(rxbuffer.buffer[rxbuffer.writepos]))[rxbuffer.inpacket_pos++]=read;
 		rxbuffer.escape=0;
 	}
@@ -82,7 +82,7 @@ ISR( USART_RX_vect ) {
 			}
 		}
 		else {
-			if (rxbuffer.inpacket_pos<ABSOLUTE_MAXIMUM_SIZE)
+			if (rxbuffer.inpacket_pos<(ABSOLUTE_MAXIMUM_SIZE+1))
 				((uint8_t*)&(rxbuffer.buffer[rxbuffer.writepos]))[rxbuffer.inpacket_pos++]=read;
 		}
 	}
@@ -90,7 +90,7 @@ ISR( USART_RX_vect ) {
 
 ISR( USART_UDRE_vect ) {
 	if ( txbuffer.readpos != txbuffer.writepos ) {
-		if (txbuffer.inpacket_pos<ABSOLUTE_MAXIMUM_SIZE) {
+		if (txbuffer.inpacket_pos<(ABSOLUTE_MAXIMUM_SIZE+1)) {
 			if (txbuffer.escape==0 &&
 				( ((uint8_t*)(txbuffer.buffer+txbuffer.readpos))[txbuffer.inpacket_pos]==SLIP_END ||
 				((uint8_t*)(txbuffer.buffer+txbuffer.readpos))[txbuffer.inpacket_pos]==SLIP_ESC ) ) {

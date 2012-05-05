@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 	
 	fd_set connections;
 	int max_sock, len, bufpos, i;
-	char fromradio[32], toradio[32];
+	char fromradio[33], toradio[33];
 	char buffer[130];
 	int escaped=0;
 	int fromradio_pos=0;
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 		
 		if (pselect(max_sock, &connections, NULL, NULL, &timeout, NULL) > 0 ) {
 			if (FD_ISSET(mcast_port, &connections)) {
-				if ((len=read(mcast_port, toradio, 32)) > 0) {
+				if ((len=read(mcast_port, toradio, 33)) > 0) {
 					bufpos=0;
 					for (i=0; i<len; i++) {
 						if (toradio[i]==SLIP_END || toradio[i]==SLIP_ESC) {
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
 						
 // 						printf("%02x ",buffer[i]&0xff);
 						fromradio[fromradio_pos]=buffer[i];
-						if (fromradio_pos<31) fromradio_pos++;
+						if (fromradio_pos<32) fromradio_pos++;
 						escaped=0;
 					}
 				}

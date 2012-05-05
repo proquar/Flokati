@@ -169,8 +169,8 @@ public class RemoteConnectionService extends Service {
 			this.sock=sock;
 		}
 		public void run() {
-			byte[] buffer = new byte[32];
-			DatagramPacket p = new DatagramPacket(buffer, 32);
+			byte[] buffer = new byte[33];
+			DatagramPacket p = new DatagramPacket(buffer, 33);
 			while (this.sock!=null){
 				try {
 					this.sock.receive(p);
@@ -187,7 +187,7 @@ public class RemoteConnectionService extends Service {
 		public void sendPacket(byte[] packet) {
 			if (this.sock!=null && flokatiGroup!=null) {
 				try {
-					this.sock.send(new DatagramPacket(packet, 32, flokatiGroup, 5331));
+					this.sock.send(new DatagramPacket(packet, 33, flokatiGroup, 5331));
 				} catch (IOException e) {
 //					Log.v("RemoteConnection", "Problems while sending packet");
 					e.printStackTrace();

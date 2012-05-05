@@ -3,16 +3,16 @@ package de.proquariat.flokati;
 import android.os.Message;
 
 
-public class PacketParser {	
+public class PacketParser {
 	public void newPacket(byte[] packet) {
-		if (packet.length>=9 && (packet[0]==0x40 || packet[0]==0x41)) {
+		if (packet.length>=10 && packet[0]==0x34 && (packet[1]==0x40 || packet[1]==0x41)) {
 			long id=0;
-			for (int i=1; i<9 ; i++) {
+			for (int i=2; i<10 ; i++) {
 				id<<=8;
 				id+=(((int)packet[i])&0xff);
 			}
-			if (packet[0]==0x40) this.handleMessage(id, packet, 9);
-			else if (packet[0]==0x41) this.handleNotify(id, packet, 9);
+			if (packet[1]==0x40) this.handleMessage(id, packet, 10);
+			else if (packet[1]==0x41) this.handleNotify(id, packet, 10);
 		}
 	}
 	private void handleNotify(long address, byte[] packet, int offset) {

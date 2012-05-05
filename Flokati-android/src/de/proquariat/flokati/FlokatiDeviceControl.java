@@ -28,7 +28,7 @@ public class FlokatiDeviceControl {
 	public boolean isValid=false;
 	
 	public byte[] getSinkAndValueBytes() {
-		byte toreturn[]=new byte[1];
+		byte toreturn[];
 		
 		if (this.typeTag==FlokatiDeviceControl.BOOLEAN) {
 			toreturn=new byte[2];
@@ -82,6 +82,8 @@ public class FlokatiDeviceControl {
 			toreturn[3]=(byte) (corrected>>8);
 			toreturn[4]=(byte) (corrected);
 			
+		} else {
+			toreturn=new byte[1];
 		}
 		toreturn[0]=(byte) this.sink;
 		

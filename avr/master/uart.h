@@ -11,12 +11,17 @@
 #define RX_BUFFER_SIZE 2
 #define RX_BUFFER_MASK 0x1
 
+typedef struct _pCont {
+	uint8_t type;
+	radiopacket_t packet;
+} packetContainer_t;
+
 typedef struct _pbufr {
 	uint8_t writepos;
 	uint8_t readpos;
 	uint8_t inpacket_pos;
 	uint8_t escape;
-	radiopacket_t buffer[RX_BUFFER_SIZE];
+	packetContainer_t buffer[RX_BUFFER_SIZE];
 } rxBuffer_t;
 
 // to host 
@@ -28,7 +33,7 @@ typedef struct _pbuft {
 	uint8_t readpos;
 	uint8_t inpacket_pos;
 	uint8_t escape;
-	radiopacket_t buffer[TX_BUFFER_SIZE];
+	packetContainer_t buffer[TX_BUFFER_SIZE];
 } txBuffer_t;
 
 volatile rxBuffer_t rxbuffer;
@@ -38,14 +43,14 @@ volatile txBuffer_t txbuffer;
 uint8_t uartRxAvailable(void);
 
 // returns the next available packet or 0
-radiopacket_t *uartRxGet(void);
+packetContainer_t *uartRxGet(void);
 
 // confirm that you are done processing that packet
 void uartRxConfirm(void);
 
 
 // returns number of next available spot in buffer
-radiopacket_t *uartTxGet(void);
+packetContainer_t *uartTxGet(void);
 
 // confirm that you are done writing to that spot
 void uartTxConfirm(void);

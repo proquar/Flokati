@@ -32,12 +32,16 @@ int main(void)
 	radiopacket_t pack;
 	for(;;) {
 		if (uartRxAvailable()) {
-			Radio_Transmit(uartRxGet(), ABSOLUTE_MAXIMUM_SIZE, RADIO_WAIT_FOR_TX);
+			packetContainer_t *packet=uartRxGet();
+			if (packet->type==FLOKATI_STANDARD)
+				Radio_Transmit(&(packet->packet), ABSOLUTE_MAXIMUM_SIZE, RADIO_WAIT_FOR_TX);
 			uartRxConfirm();
 		}
 		if (packet_available) {
 			packet_available--;
-			if (Radio_Receive(uartTxGet())>=RADIO_RX_MORE_PACKETS) {
+			packetContainer_t *packet = uartTxGet();
+			packet->type=FLOKATI_STANDARD;
+			if (Radio_Receive(&(packet->packet))>=RADIO_RX_MORE_PACKETS) {
 				STATUS_ON();
 				blinker_cnt=TCNT1;
 				uartTxConfirm();
