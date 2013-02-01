@@ -50,8 +50,8 @@ public class RemoteConnectionService extends Service {
 			this.sock=sock;
 		}
 		public void run() {
-			byte[] buffer = new byte[2048];
-			DatagramPacket p = new DatagramPacket(buffer, 2048);
+			byte[] buffer = new byte[4096];
+			DatagramPacket p = new DatagramPacket(buffer, 4096);
 			while (this.sock!=null){
 				try {
 					this.sock.receive(p);
