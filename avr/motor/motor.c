@@ -49,9 +49,9 @@ void prepareNotify(void) {
 	notify.type=NOTIFY;
 	memcpy(notify.address, OWN_ADDRESS, 8);
 	
-	notify.data.notify.content[ 0]=0x01;
-	notify.data.notify.content[ 3]=0x02;
-	notify.data.notify.content[ 5]=0x03;
+	notify.data.notify.content[ 0]=0x01; //len: 2
+	notify.data.notify.content[ 3]=0x02; //len: 1
+	notify.data.notify.content[ 5]=0x03; //invalid sink
 }
 void sendNotify(void) {
 	notify.data.notify.content[ 1]=receivedSpeed>>8;

@@ -51,8 +51,9 @@ public class RemoteConnectionService extends Service {
 		}
 		public void run() {
 			byte[] buffer = new byte[4096];
-			DatagramPacket p = new DatagramPacket(buffer, 4096);
+			
 			while (this.sock!=null){
+				DatagramPacket p = new DatagramPacket(buffer, 4096);
 				try {
 					this.sock.receive(p);
 				} catch (IOException e) {
@@ -63,7 +64,7 @@ public class RemoteConnectionService extends Service {
 				if (this.requests.size()>0) {
 					JSONObject info;
 					try {
-						info=new JSONObject(new String(buffer));
+						info=new JSONObject(new String(buffer,0, p.getLength()));
 						//TODO: Can we make this more efficient?
 					} catch (JSONException e) {
 						e.printStackTrace();
