@@ -1,0 +1,22 @@
+{
+	"family": "0000000100f10100",
+	"mask": 56,
+	"ttl": 600,
+	"ttl-orig": 600,
+	"manufacturer": "Proquariat",
+	"model": "Strobo",
+	"name": "Strobe",
+	"names": {
+		"de": "Strobo"
+	},
+	"sinks": [
+		{
+			"id": 1,
+			"type": "unsigned short",
+			"name": "Pulsewidth",
+			"names": {
+				"de": "Pulslänge"
+			}
+		}
+	]
+}

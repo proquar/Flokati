@@ -12,29 +12,27 @@
 //   3: strobe length (16bit unsigned)
 //   4: strobe spacing (16bit unsigned)
 
-//#define ID_WHITE 1
-#define ID_GREEN 1
+// White: 1
+//#define OWN_ADDRESS		"\0\0\0\x01\x00\x01\x00\x01"
 
-#ifdef ID_WHITE
-	#define OWN_ADDRESS		"\0\0\0\x01\x00\x01\x00\x01"
-#endif
-#ifdef ID_WHITE2
-	#define OWN_ADDRESS		"\0\0\0\x01\x00\x01\x00\x02"
-#endif
-#ifdef ID_GREEN
-	#define OWN_ADDRESS		"\0\0\0\x01\x00\x02\x00\x01"
-#endif
+// White: 2
+#define OWN_ADDRESS		"\0\0\0\x01\x00\x01\x00\x02"
+	
+// Green: 1
+//#define OWN_ADDRESS		"\0\0\0\x01\x00\x02\x00\x01"
+
+//#define INVERTED_PWM 1
 
 
 // status-led
-#define STATUS_INIT()	DDRC |= (1<<2)
-#define STATUS_ON() 	DDRC |= (1<<2)
-#define STATUS_OFF() 	DDRC &= ~(1<<2)
+#define STATUS_INIT()	DDRC |= (1<<3)
+#define STATUS_ON() 	DDRC |= (1<<3)
+#define STATUS_OFF() 	DDRC &= ~(1<<3)
 
 // status-led
-#define RXMON_INIT()	DDRC |= (1<<3)
-#define RXMON_ON() 		DDRC |= (1<<3)
-#define RXMON_OFF() 	DDRC &= ~(1<<3)
+// #define RXMON_INIT()	DDRC |= (1<<3)
+// #define RXMON_ON() 		DDRC |= (1<<3)
+// #define RXMON_OFF() 	DDRC &= ~(1<<3)
 
 
 radiopacket_t packet, notify;
@@ -42,7 +40,7 @@ volatile uint8_t newPacket=0;
 volatile uint16_t nrf_reset_cnt=0;
 volatile uint8_t notify_cnt=0;
 
-volatile uint16_t tBrightness=0xffff;
+volatile uint16_t tBrightness=0xe000;
 volatile uint8_t tStrobe=0;
 volatile uint16_t tStrobeSpac=0x0900;
 volatile uint16_t tStrobeLen=0x0900;
@@ -84,14 +82,18 @@ void sendNotify(void) {
 
 int main(void)
 {
-// 	STATUS_INIT();
-	RXMON_INIT();
+	uint8_t commitChanges=0;
 	
-// 	STATUS_OFF();
+	STATUS_INIT();
 	
-	// Initialize Timer1 for PWM on OC1A (inverting) with maximum frequency and 10bit -> 7.8kHz PWM
-	TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11)|(1<<WGM10);
-	TCCR1B = (1<<WGM12)|(1<<CS10);
+	// Initialize Timer1 for PWM on OC1A with maximum frequency and 10bit -> 7.8kHz PWM
+	#ifdef INVERTED_PWM
+		TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11)|(1<<WGM10);
+	#else
+		TCCR1A = (1<<COM1A1)|(1<<WGM11)|(1<<WGM10);
+	#endif
+	
+	TCCR1B = (1<<WGM12)|(1<<CS10); //no prescaler
 	OCR1A=tBrightness>>6;
 	DDRB |= (1<<1);
 	PORTB |= (1<<1);
@@ -119,7 +121,7 @@ int main(void)
 				
 				// a real data package received
 				if (packet.type==MESSAGE && (memcmp(packet.address, OWN_ADDRESS, 8)==0)) {
-					RXMON_ON();
+					STATUS_ON();
 					
 					cli();
 					uint8_t content_ptr=0;
@@ -130,42 +132,57 @@ int main(void)
 							tBrightness <<= 8;
 							tBrightness |= packet.data.message.content[content_ptr+2];
 							content_ptr+=3;
+							commitChanges=1;
 						} else if (sink==2) {
 							tStrobe = packet.data.message.content[content_ptr+1];
 							content_ptr+=2;
+							commitChanges=1;
 						} else if (sink==3) {
 							tStrobeLen = packet.data.message.content[content_ptr+1];
 							tStrobeLen <<= 8;
 							tStrobeLen |= packet.data.message.content[content_ptr+2];
 							content_ptr+=3;
+							commitChanges=1;
 						} else if (sink==4) {
 							tStrobeSpac = packet.data.message.content[content_ptr+1];
 							tStrobeSpac <<= 8;
 							tStrobeSpac |= packet.data.message.content[content_ptr+2];
 							content_ptr+=3;
+							commitChanges=1;
 						} else {
 							break;
 						}
 					}
 					sei();
 					
-					if (tStrobe) {
-						OCR1A = tStrobeLen>>1;
-						ICR1 = (tStrobeLen>>1) + (tStrobeSpac>>1);				// divide by 2, so we have a maximum of 2^16
-						
-						TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11);		// prescaler 256, ICR1 max
-						TCCR1B = (1<<WGM13)|(1<<WGM12)|(1<<CS12);
-						
-						if (TCNT1>ICR1) TCNT1=0;
-					}
-					else {
-						OCR1A = tBrightness>>6; //dimming with 10 bit, so discard lower 6 bit
-								
-						TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11)|(1<<WGM10);		// max frequency, 10 bit in counter 1
-						TCCR1B = (1<<WGM12)|(1<<CS10);
+					if (commitChanges) {
+						commitChanges=0;
+						if (tStrobe) {
 							
-						if (TCNT1>1024) TCNT1=0;
-						
+							#ifdef INVERTED_PWM
+								TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11);		// prescaler 256, ICR1 max
+							#else
+								TCCR1A = (1<<COM1A1)|(1<<WGM11);
+							#endif
+							TCCR1B = (1<<WGM13)|(1<<WGM12)|(1<<CS12);
+							
+							OCR1A = tStrobeLen>>1;
+							ICR1 = (tStrobeLen>>1) + (tStrobeSpac>>1);				// divide by 2, so we have a maximum of 2^16
+							if (TCNT1>ICR1) TCNT1=0;
+						}
+						else {
+							
+							#ifdef INVERTED_PWM
+								TCCR1A = (1<<COM1A1)|(1<<COM1A0)|(1<<WGM11)|(1<<WGM10);		// max frequency, 10 bit in counter 1
+							#else
+								TCCR1A = (1<<COM1A1)|(1<<WGM11)|(1<<WGM10);
+							#endif
+							TCCR1B = (1<<WGM12)|(1<<CS10);
+							
+							OCR1A = tBrightness>>6; //dimming with 10 bit, so discard lower 6 bit
+							if (TCNT1>1023) TCNT1=0;
+							
+						}
 					}
 				}
 			}
@@ -189,7 +206,7 @@ int main(void)
 ISR( TIMER2_OVF_vect ) {
 	nrf_reset_cnt++;
 	notify_cnt++;
-	RXMON_OFF();
+	STATUS_OFF();
 }
 
 void radio_rxhandler(uint8_t pipe_number)
